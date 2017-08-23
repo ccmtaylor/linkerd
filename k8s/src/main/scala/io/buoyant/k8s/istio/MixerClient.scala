@@ -112,18 +112,15 @@ case class MixerClient(service: Service[h2.Request, h2.Response]) {
     targetLabelVersion: String,
     duration: Duration
   ): Stream[ReportResponse] = {
-    val reportRequest =
-      mkReportRequest(
+
+    val reportRequest = MixerApiRequests.mkReportRequest(
         responseCode,
         requestPath,
         targetService,
         sourceLabelApp,
         targetLabelApp,
         targetLabelVersion,
-        gDuration(
-          seconds = Some(duration.inLongSeconds),
-          nanos = Some((duration.inNanoseconds - duration.inLongSeconds * 1000000000L).toInt)
-        )
+        duration
       )
     log.trace(s"MixerClient.report: $reportRequest")
     client.report(Stream.value(reportRequest))
